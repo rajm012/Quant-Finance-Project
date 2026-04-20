@@ -1,0 +1,28 @@
+
+from .C1DTLZ1 import C1DTLZ1
+from .C1DTLZ3 import C1DTLZ3
+from .C2DTLZ2 import C2DTLZ2
+from .C3DTLZ1 import C3DTLZ1
+from .C3DTLZ4 import C3DTLZ4
+from .DC1DTLZ1 import DC1DTLZ1
+from .DC1DTLZ3 import DC1DTLZ3
+from .DC2DTLZ1 import DC2DTLZ1
+from .DC2DTLZ3 import DC2DTLZ3
+from .DC3DTLZ1 import DC3DTLZ1
+from .DC3DTLZ3 import DC3DTLZ3
+from .Base import BaseCMOP
+
+__all__ = [
+    "BaseCMOP",
+    "C1DTLZ1",
+    "C1DTLZ3",
+    "C2DTLZ2",
+    "C3DTLZ1",
+    "C3DTLZ4",
+    "DC1DTLZ1",
+    "DC1DTLZ3",
+    "DC2DTLZ1",
+    "DC2DTLZ3",
+    "DC3DTLZ1",
+    "DC3DTLZ3",
+]
