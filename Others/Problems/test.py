@@ -49,7 +49,7 @@
 
 
 import numpy as np
-from Problems import *
+from Others.Problems import *
 
 problems = [
     C1DTLZ1(3), C1DTLZ3(3), C2DTLZ2(3), C3DTLZ1(3), C3DTLZ4(3),
