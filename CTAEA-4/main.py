@@ -143,15 +143,10 @@ def main():
                         help='Verbose output')
     parser.add_argument('--output', type=str, default='Results',
                         help='Output directory')
-    parser.add_argument('--n-jobs', type=int, default=1,
-                        help='Number of worker processes for parallel runs')
-    parser.add_argument('--parallel-mode', type=str, default='per-config',
-                        choices=['per-config', 'global'],
-                        help='Parallel scheduling mode')
-    parser.add_argument('--gpu-ids', type=str, default='',
-                        help='Comma-separated GPU IDs for round-robin task pinning, e.g. 0,1,2,3')
-    parser.add_argument('--worker-threads', type=int, default=1,
-                        help='BLAS/OpenMP threads per worker process (recommended 1 for many workers)')
+    parser.add_argument('--workers', type=int, default=None,
+                        help='Number of parallel workers (default: auto, recommend 48-60 for 64-thread systems)')
+    parser.add_argument('--legacy', action='store_true',
+                        help='Use legacy sequential runner instead of parallel runner')
 
     args = parser.parse_args()
 
@@ -159,16 +154,37 @@ def main():
         quick_demo()
     
     elif args.full:
-        from Experiments.runner import run_experiment
-        run_experiment(
-            n_runs=51,
-            output_dir=args.output,
-            verbose=args.verbose,
-            n_jobs=args.n_jobs,
-            parallel_mode=args.parallel_mode,
-            gpu_ids=args.gpu_ids,
-            worker_threads=args.worker_threads,
-        )
+        # Use parallel runner by default for full replication
+        if args.legacy:
+            from Experiments.runner import run_experiment
+            run_experiment(
+                n_runs=51,
+                output_dir=args.output,
+                verbose=args.verbose,
+                n_jobs=args.workers or 1,
+            )
+        else:
+            # Use highly parallel runner with spawn method
+            import multiprocessing as mp
+            try:
+                mp.set_start_method('spawn', force=True)
+            except RuntimeError:
+                pass
+            
+            from Experiments.parallel_runner import run_experiment_parallel
+            
+            n_workers = args.workers
+            if n_workers is None:
+                cpu_count = mp.cpu_count()
+                n_workers = min(60, max(1, cpu_count - 4))  # Leave headroom
+            
+            print(f"Running full replication with {n_workers} parallel workers (spawn method)...")
+            run_experiment_parallel(
+                n_runs=51,
+                n_workers=n_workers,
+                output_dir=args.output,
+                verbose=True,
+            )
     
     elif args.analyze:
         from Analysis.analysis import load_and_analyze

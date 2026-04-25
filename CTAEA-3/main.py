@@ -139,35 +139,36 @@ def main():
                         help='Algorithm name')
     parser.add_argument('--runs', type=int, default=5,
                         help='Number of independent runs')
+    parser.add_argument('--parallel', action='store_true',
+                        help='Use parallel runner (recommended for full replication). '
+                             'Launches Experiments/parallel_runner.py directly.')
+    parser.add_argument('--workers', type=int, default=56,
+                        help='Worker processes for --parallel (default 56).')
     parser.add_argument('--verbose', action='store_true',
                         help='Verbose output')
     parser.add_argument('--output', type=str, default='Results',
                         help='Output directory')
-    parser.add_argument('--n-jobs', type=int, default=1,
-                        help='Number of worker processes for parallel runs')
-    parser.add_argument('--parallel-mode', type=str, default='per-config',
-                        choices=['per-config', 'global'],
-                        help='Parallel scheduling mode')
-    parser.add_argument('--gpu-ids', type=str, default='',
-                        help='Comma-separated GPU IDs for round-robin task pinning, e.g. 0,1,2,3')
-    parser.add_argument('--worker-threads', type=int, default=1,
-                        help='BLAS/OpenMP threads per worker process (recommended 1 for many workers)')
 
     args = parser.parse_args()
 
     if args.quick:
         quick_demo()
-    
+
+    elif args.parallel:
+        from Experiments.parallel_runner import run_parallel_experiment, print_summary
+        combined = run_parallel_experiment(
+            n_runs=51,
+            output_dir=args.output,
+            n_workers=args.workers,
+        )
+        print_summary(combined)
+
     elif args.full:
         from Experiments.runner import run_experiment
         run_experiment(
             n_runs=51,
             output_dir=args.output,
             verbose=args.verbose,
-            n_jobs=args.n_jobs,
-            parallel_mode=args.parallel_mode,
-            gpu_ids=args.gpu_ids,
-            worker_threads=args.worker_threads,
         )
     
     elif args.analyze:

@@ -14,6 +14,7 @@ import numpy as np
 import json
 import time
 import hashlib
+import multiprocessing as mp
 from pathlib import Path
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
@@ -145,12 +146,66 @@ def run_single(problem_name, m, algo_name, seed=0, verbose=False):
 
 def _run_single_safe(task):
     """Process-safe wrapper for a single run task."""
-    run_idx, problem_name, m, algo_name, seed, verbose = task
+    run_idx, problem_name, m, algo_name, seed, verbose, gpu_id = task
+
+    # Optional per-process GPU pinning. This is a no-op for pure NumPy runs,
+    # but enables GPU-aware execution if a downstream GPU backend is introduced.
+    if gpu_id is not None:
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
+
     try:
         res = run_single(problem_name, m, algo_name, seed=seed, verbose=verbose)
         return run_idx, res, None
     except Exception as e:
         return run_idx, None, str(e)
+
+
+def _parse_gpu_ids(gpu_ids):
+    """Normalize gpu_ids into a list of ints."""
+    if gpu_ids is None:
+        return []
+    if isinstance(gpu_ids, str):
+        cleaned = gpu_ids.strip()
+        if not cleaned:
+            return []
+        return [int(x.strip()) for x in cleaned.split(',') if x.strip()]
+    return [int(x) for x in gpu_ids]
+
+
+def _stable_seed(problem_name, m, algo_name, run_idx):
+    """Create stable deterministic seed independent of Python hash randomization."""
+    seed_key = f"{problem_name}|{m}|{algo_name}|{run_idx}"
+    return int(hashlib.sha256(seed_key.encode('utf-8')).hexdigest()[:8], 16) % (2**31)
+
+
+def _summarize_run_results(run_results):
+    """Build summary statistics for a list of per-run dictionaries."""
+    igd_vals = [r['igd'] for r in run_results]
+    hv_vals = [r['hv'] for r in run_results]
+
+    return {
+        'igd_median': float(np.median(igd_vals)) if igd_vals else np.inf,
+        'igd_iqr':    float(np.subtract(*np.percentile(igd_vals, [75, 25])))
+                      if len(igd_vals) > 1 else 0.0,
+        'hv_median':  float(np.median(hv_vals)),
+        'hv_iqr':     float(np.subtract(*np.percentile(hv_vals, [75, 25])))
+                      if len(hv_vals) > 1 else 0.0,
+        'n_runs_feasible': sum(r['n_feasible'] > 0 for r in run_results),
+        'runs': run_results,
+    }
+
+
+def _get_mp_context():
+    """Choose multiprocessing context with a Linux-friendly default."""
+    method = os.environ.get('CTAEA_MP_START', '').strip().lower()
+    if method in {'fork', 'spawn', 'forkserver'}:
+        return mp.get_context(method)
+
+    if os.name == 'posix':
+        # Fast and robust for this NumPy-heavy codebase on Linux clusters.
+        return mp.get_context('fork')
+
+    return mp.get_context('spawn')
 
 
 def _get_nondominated(algo):
@@ -183,7 +238,8 @@ def _compute_hv(F, ref_point):
 
 
 def run_experiment(problem_names=None, m_values=None, algo_names=None,
-    n_runs=51, output_dir='Results', verbose=False, quick_test=False, n_jobs=1):
+    n_runs=51, output_dir='Results', verbose=False, quick_test=False,
+    n_jobs=1, parallel_mode='per-config', gpu_ids=None, worker_threads=1):
     """
     Run full experiment replicating paper results.
 
@@ -196,7 +252,10 @@ def run_experiment(problem_names=None, m_values=None, algo_names=None,
     output_dir    : str
     verbose       : bool
     quick_test    : bool  if True, run 3 runs with m=3 only
-    n_jobs        : int   number of parallel worker processes for independent runs
+    n_jobs        : int   number of parallel worker processes
+    parallel_mode : str   'per-config' or 'global'
+    gpu_ids       : list[str|int]|str  optional GPU IDs for round-robin task pinning
+    worker_threads: int   BLAS/OpenMP threads per process (recommended 1 when n_jobs > 1)
     """
     if problem_names is None:
         problem_names = list(PROBLEM_CLASSES.keys())
@@ -208,6 +267,22 @@ def run_experiment(problem_names=None, m_values=None, algo_names=None,
     if quick_test:
         n_runs = 3
         m_values = [3]
+
+    if n_jobs is None or n_jobs < 1:
+        n_jobs = 1
+
+    if parallel_mode not in {'per-config', 'global'}:
+        raise ValueError("parallel_mode must be 'per-config' or 'global'")
+
+    gpu_ids = _parse_gpu_ids(gpu_ids)
+
+    # Prevent oversubscription when running many worker processes.
+    if n_jobs > 1:
+        threads = max(1, int(worker_threads))
+        os.environ['OMP_NUM_THREADS'] = str(threads)
+        os.environ['OPENBLAS_NUM_THREADS'] = str(threads)
+        os.environ['MKL_NUM_THREADS'] = str(threads)
+        os.environ['NUMEXPR_NUM_THREADS'] = str(threads)
 
     out_dir = Path(output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -221,77 +296,137 @@ def run_experiment(problem_names=None, m_values=None, algo_names=None,
         results[prob_name] = {}
         for m in m_values:
             results[prob_name][m] = {}
-            for algo_name in algo_names:
-                print(f"\n{'='*60}")
-                print(f"Problem: {prob_name}, m={m}, Algorithm: {algo_name}")
-                print(f"{'='*60}")
 
-                run_results = []
-                seed_key = f"{prob_name}|{m}"
-                base = int(hashlib.sha256(seed_key.encode("utf-8")).hexdigest()[:8], 16)
+    if parallel_mode == 'global' and n_jobs > 1:
+        print(f"\nRunning in global parallel mode with {n_jobs} workers")
+        if gpu_ids:
+            print(f"GPU round-robin enabled across IDs: {gpu_ids}")
 
-                tasks = []
-                for run_idx in range(n_runs):
-                    seed = (base + run_idx * 100) % (2**31)
-                    tasks.append((run_idx, prob_name, m, algo_name, seed, verbose))
+        configs = []
+        all_tasks = []
+        task_counter = 0
 
-                if n_jobs <= 1:
-                    ordered = []
-                    for task in tasks:
-                        run_idx, res, err = _run_single_safe(task)
-                        ordered.append((run_idx, res, err))
+        for prob_name in problem_names:
+            for m in m_values:
+                for algo_name in algo_names:
+                    configs.append((prob_name, m, algo_name))
+                    for run_idx in range(n_runs):
+                        seed = _stable_seed(prob_name, m, algo_name, run_idx)
+                        gpu_id = gpu_ids[task_counter % len(gpu_ids)] if gpu_ids else None
+                        all_tasks.append((run_idx, prob_name, m, algo_name, seed, verbose, gpu_id))
+                        task_counter += 1
+
+        run_store = {
+            (prob_name, m, algo_name): [None] * n_runs
+            for (prob_name, m, algo_name) in configs
+        }
+
+        ctx = _get_mp_context()
+        with ProcessPoolExecutor(max_workers=n_jobs, mp_context=ctx) as ex:
+            future_to_meta = {}
+            for task in all_tasks:
+                fut = ex.submit(_run_single_safe, task)
+                future_to_meta[fut] = (task[0], task[1], task[2], task[3])
+
+            for fut in as_completed(future_to_meta):
+                run_idx, prob_name, m, algo_name = future_to_meta[fut]
+                out_run_idx, res, err = fut.result()
+                assert out_run_idx == run_idx
+
+                if err is None:
+                    run_store[(prob_name, m, algo_name)][run_idx] = res
                 else:
-                    ordered = []
-                    with ProcessPoolExecutor(max_workers=n_jobs) as ex:
-                        futures = [ex.submit(_run_single_safe, task) for task in tasks]
-                        for fut in as_completed(futures):
-                            ordered.append(fut.result())
+                    run_store[(prob_name, m, algo_name)][run_idx] = {
+                        'igd': np.inf,
+                        'hv': 0.0,
+                        'n_feasible': 0,
+                        'time_sec': 0.0,
+                        'F_nd': [],
+                    }
+                    print(f"Run failed | {prob_name} m={m} {algo_name} run={run_idx+1}: {err}")
 
-                ordered.sort(key=lambda t: t[0])
+                done += 1
+                if done % 25 == 0 or done == total:
+                    print(f"Progress: {done}/{total} runs completed")
 
-                for run_idx, res, err in ordered:
-                    if err is None:
-                        run_results.append(res)
-                        print(f"  Run {run_idx+1:2d}/{n_runs} | "
-                              f"IGD={res['igd']:.4e} | "
-                              f"HV={res['hv']:.4e} | "
-                              f"Feasible={res['n_feasible']} | "
-                              f"Time={res['time_sec']:.1f}s")
+        for prob_name, m, algo_name in configs:
+            print(f"\n{'='*60}")
+            print(f"Problem: {prob_name}, m={m}, Algorithm: {algo_name}")
+            print(f"{'='*60}")
+
+            run_results = run_store[(prob_name, m, algo_name)]
+            summary = _summarize_run_results(run_results)
+
+            print(f"  SUMMARY -> IGD: {summary['igd_median']:.4e} "
+                  f"({summary['igd_iqr']:.2e}) | "
+                  f"HV: {summary['hv_median']:.4e} "
+                  f"({summary['hv_iqr']:.2e})")
+
+            results[prob_name][m][algo_name] = summary
+
+            save_path = out_dir / f"{prob_name}_m{m}_{algo_name.replace('/', '_')}.json"
+            with open(save_path, 'w') as f:
+                json.dump(_to_serializable(summary), f, indent=2)
+
+    else:
+        for prob_name in problem_names:
+            for m in m_values:
+                for algo_name in algo_names:
+                    print(f"\n{'='*60}")
+                    print(f"Problem: {prob_name}, m={m}, Algorithm: {algo_name}")
+                    print(f"{'='*60}")
+
+                    run_results = []
+                    tasks = []
+                    for run_idx in range(n_runs):
+                        seed = _stable_seed(prob_name, m, algo_name, run_idx)
+                        gpu_id = gpu_ids[run_idx % len(gpu_ids)] if gpu_ids else None
+                        tasks.append((run_idx, prob_name, m, algo_name, seed, verbose, gpu_id))
+
+                    if n_jobs <= 1:
+                        ordered = []
+                        for task in tasks:
+                            run_idx, res, err = _run_single_safe(task)
+                            ordered.append((run_idx, res, err))
                     else:
-                        print(f"  Run {run_idx+1:2d}/{n_runs} FAILED: {err}")
-                        run_results.append({'igd': np.inf, 'hv': 0.0,
-                                           'n_feasible': 0, 'time_sec': 0.0,
-                                           'F_nd': []})
-                    done += 1
+                        ordered = []
+                        ctx = _get_mp_context()
+                        with ProcessPoolExecutor(max_workers=n_jobs, mp_context=ctx) as ex:
+                            futures = [ex.submit(_run_single_safe, task) for task in tasks]
+                            for fut in as_completed(futures):
+                                ordered.append(fut.result())
 
-                # Keep infinities for faithful reporting when algorithms fail to
-                # find feasible solutions in some runs.
-                igd_vals = [r['igd'] for r in run_results]
-                hv_vals = [r['hv'] for r in run_results]
+                    ordered.sort(key=lambda t: t[0])
 
-                summary = {
-                    'igd_median': float(np.median(igd_vals)) if igd_vals else np.inf,
-                    'igd_iqr':    float(np.subtract(*np.percentile(igd_vals, [75, 25])))
-                                  if len(igd_vals) > 1 else 0.0,
-                    'hv_median':  float(np.median(hv_vals)),
-                    'hv_iqr':     float(np.subtract(*np.percentile(hv_vals, [75, 25])))
-                                  if len(hv_vals) > 1 else 0.0,
-                    'n_runs_feasible': sum(r['n_feasible'] > 0 for r in run_results),
-                    'runs': run_results,
-                }
+                    for run_idx, res, err in ordered:
+                        if err is None:
+                            run_results.append(res)
+                            print(f"  Run {run_idx+1:2d}/{n_runs} | "
+                                  f"IGD={res['igd']:.4e} | "
+                                  f"HV={res['hv']:.4e} | "
+                                  f"Feasible={res['n_feasible']} | "
+                                  f"Time={res['time_sec']:.1f}s")
+                        else:
+                            print(f"  Run {run_idx+1:2d}/{n_runs} FAILED: {err}")
+                            run_results.append({'igd': np.inf, 'hv': 0.0,
+                                               'n_feasible': 0, 'time_sec': 0.0,
+                                               'F_nd': []})
+                        done += 1
 
-                print(f"\n  SUMMARY -> IGD: {summary['igd_median']:.4e} "
-                      f"({summary['igd_iqr']:.2e}) | "
-                      f"HV: {summary['hv_median']:.4e} "
-                      f"({summary['hv_iqr']:.2e})")
+                    summary = _summarize_run_results(run_results)
 
-                results[prob_name][m][algo_name] = summary
+                    print(f"\n  SUMMARY -> IGD: {summary['igd_median']:.4e} "
+                          f"({summary['igd_iqr']:.2e}) | "
+                          f"HV: {summary['hv_median']:.4e} "
+                          f"({summary['hv_iqr']:.2e})")
 
-                # Save incrementally
-                save_path = out_dir / f"{prob_name}_m{m}_{algo_name.replace('/', '_')}.json"
-                with open(save_path, 'w') as f:
-                    # Convert numpy types for JSON
-                    json.dump(_to_serializable(summary), f, indent=2)
+                    results[prob_name][m][algo_name] = summary
+
+                    # Save incrementally
+                    save_path = out_dir / f"{prob_name}_m{m}_{algo_name.replace('/', '_')}.json"
+                    with open(save_path, 'w') as f:
+                        # Convert numpy types for JSON
+                        json.dump(_to_serializable(summary), f, indent=2)
 
     # Save combined results
     combined_path = out_dir / 'all_results.json'

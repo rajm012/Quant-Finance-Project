@@ -67,6 +67,37 @@ python main.py --full --output Results
 python main.py --analyze --output Results
 ```
 
+### Fast parallel replication (single-shot)
+
+Run the full paper sweep with process-level parallelism across all runs/configurations:
+
+```bash
+python main.py \
+  --full \
+  --output Results \
+  --n-jobs 56 \
+  --parallel-mode global \
+  --worker-threads 1
+```
+
+GPU-aware task pinning (round-robin task assignment to GPU IDs):
+
+```bash
+python main.py \
+  --full \
+  --output Results \
+  --n-jobs 56 \
+  --parallel-mode global \
+  --gpu-ids 0,1,2,3,4,5,6,7 \
+  --worker-threads 1
+```
+
+Notes:
+- `--parallel-mode global` runs all independent runs in one global process pool.
+- `--worker-threads 1` avoids BLAS/OpenMP oversubscription at high process counts.
+- `--gpu-ids` pins tasks to GPU IDs via `CUDA_VISIBLE_DEVICES` per worker task.
+- Current algorithm code is NumPy-based, so speedup mainly comes from multiprocessing; GPU pinning is included to support GPU-backed extensions.
+
 ---
 
 ## Algorithm Design (C-TAEA)

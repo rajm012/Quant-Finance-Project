@@ -143,15 +143,6 @@ def main():
                         help='Verbose output')
     parser.add_argument('--output', type=str, default='Results',
                         help='Output directory')
-    parser.add_argument('--n-jobs', type=int, default=1,
-                        help='Number of worker processes for parallel runs')
-    parser.add_argument('--parallel-mode', type=str, default='per-config',
-                        choices=['per-config', 'global'],
-                        help='Parallel scheduling mode')
-    parser.add_argument('--gpu-ids', type=str, default='',
-                        help='Comma-separated GPU IDs for round-robin task pinning, e.g. 0,1,2,3')
-    parser.add_argument('--worker-threads', type=int, default=1,
-                        help='BLAS/OpenMP threads per worker process (recommended 1 for many workers)')
 
     args = parser.parse_args()
 
@@ -164,10 +155,6 @@ def main():
             n_runs=51,
             output_dir=args.output,
             verbose=args.verbose,
-            n_jobs=args.n_jobs,
-            parallel_mode=args.parallel_mode,
-            gpu_ids=args.gpu_ids,
-            worker_threads=args.worker_threads,
         )
     
     elif args.analyze:
