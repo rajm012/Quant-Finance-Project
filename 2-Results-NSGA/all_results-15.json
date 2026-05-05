@@ -1,0 +1,134 @@
+{
+  "C1DTLZ1": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 0.13765077625851846,
+        "igd_iqr": 0.03649601911705411,
+        "hv_median": 3.860448132304488,
+        "hv_iqr": 0.25920228509055043,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "C1DTLZ3": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 244.4304104878384,
+        "igd_iqr": 5.54095579751305,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "C2DTLZ2": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 0.6666930252492554,
+        "igd_iqr": 0.10838253815144705,
+        "hv_median": 0.9247654626083673,
+        "hv_iqr": 0.6128896560046051,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "C3DTLZ1": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 21.152957076396568,
+        "igd_iqr": 1.799796612444002,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "C3DTLZ4": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 1.371151217297852,
+        "igd_iqr": 0.05681292833328877,
+        "hv_median": 60771.91467340015,
+        "hv_iqr": 1916.2520942219853,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC1DTLZ1": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 10.203601357892646,
+        "igd_iqr": 18.70537414316002,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC1DTLZ3": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 244.58643414104924,
+        "igd_iqr": 6.456756671719461,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC2DTLZ1": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": Infinity,
+        "igd_iqr": 0.0,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 0,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC2DTLZ3": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": Infinity,
+        "igd_iqr": 0.0,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 0,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC3DTLZ1": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 2.548532029159524,
+        "igd_iqr": 0.7802590326797221,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  },
+  "DC3DTLZ3": {
+    "15": {
+      "C-NSGA-III": {
+        "igd_median": 172.54855350743188,
+        "igd_iqr": 43.00535930811415,
+        "hv_median": 0.0,
+        "hv_iqr": 0.0,
+        "n_runs_feasible": 51,
+        "n_runs_total": 51
+      }
+    }
+  }
+}

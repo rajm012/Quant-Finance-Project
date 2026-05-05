@@ -16,6 +16,8 @@
 ## Files explained
 
 ### Problems
+
+```
 ├── Base.py
 ├── C1DTLZ1.py
 ├── C1DTLZ3.py
@@ -30,15 +32,20 @@
 ├── DC3DTlZ3.py
 ├── test.py
 └── __init__.py
+```
+
 
 
 ### Metrices
+
+```
 ├── hv.py
 ├── igd.py
 ├── __init__.py
 ├── reference_points.py
 ├── utils.py
 └── test.py
+```
 
 1) IGD
 2) Hypervolume (HV)
@@ -68,36 +75,4 @@
 4) C-MOEA/DD
 5) I-DBEA
 6) CMOEA
-
-
-## Path
-Problems → Metrics → Algorithms → Simulations → Plots → Tables
-
-Step 0 — Problems [Done]
-Step 1 — Metrics [Done]
-Step 2 — Algorithms [Working]
-Step 3 — Experiment runner
-Step 4 — Reproduce tables
-Step 5 — Extensions / research
-
-
-Problems/
-    C1DTLZ1.py
-    C1DTLZ3.py
-    ...
-    DC3DTLZ4.py
-
-Metrics/
-    igd.py
-    hv.py
-    reference_points.py
-    test.py
-    utils.py
-    __init__.py
-
-Algorithms/
-Experiments/
-Results/
-Analysis/
-
 

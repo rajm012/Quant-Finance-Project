@@ -181,13 +181,23 @@ def run_single_task(task: TaskConfig) -> TaskResult:
         ref_point = np.full(task.m, val)
         
         def _compute_hv(F, ref):
+            """Compute HV with adaptive sampling (Optimization #4)."""
             m = F.shape[1]
+            n_points = len(F)
+            
+            # Exact HV for low dimensions (paper standard)
             if m <= 5:
                 try:
                     return hypervolume(F, ref)
                 except Exception:
                     pass
-            return hypervolume_monte_carlo(F, ref, n_samples=50000)
+            
+            # Adaptive sampling for high dimensions
+            n_samples = min(50000, max(15000, n_points * 150))
+            if m > 12:
+                n_samples = min(n_samples, 25000)
+            
+            return hypervolume_monte_carlo(F, ref, n_samples=n_samples)
         
         hv_val = _compute_hv(F_nd, ref_point) if len(F_nd) > 0 else 0.0
         
