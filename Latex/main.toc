@@ -1,0 +1,19 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Problem Statement}{3}{section.1}%
+\contentsline {section}{\numberline {2}Methodology}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Mathematical formulation}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Algorithmic approach — C-TAEA (high-level)}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Operators and utilities}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}C-TAEA Detailed Procedures}{5}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Association Procedure}{5}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Update of Convergence Archive (CA)}{5}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Update of Diversity Archive (DA)}{7}{subsubsection.2.4.3}%
+\contentsline {subsubsection}{\numberline {2.4.4}Restricted Mating Selection}{8}{subsubsection.2.4.4}%
+\contentsline {subsubsection}{\numberline {2.4.5}Tournament Selection}{9}{subsubsection.2.4.5}%
+\contentsline {subsection}{\numberline {2.5}Pseudo-steps per generation}{9}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.6}Performance metrics}{9}{subsection.2.6}%
+\contentsline {section}{\numberline {3}Results \& Analysis}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Plots and figures:}{10}{subsection.3.1}%
+\contentsline {section}{\numberline {4}Novelty}{23}{section.4}%
+\contentsline {section}{\numberline {5}Team Contributions}{23}{section.5}%
+\contentsline {section}{\numberline {6}AI Assistance}{24}{section.6}%

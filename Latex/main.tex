@@ -16,10 +16,13 @@
 \usepackage{algpseudocode}
 \usepackage{lmodern}
 
+% For landscape pages
+\usepackage{pdflscape}
+
 \hypersetup{
     colorlinks=true,
-    linkcolor=blue,
-    urlcolor=blue,
+    linkcolor=black,
+    urlcolor=black,
 }
 
 % Python style for listings
@@ -40,6 +43,7 @@
 
 \title{}
 \date{}
+
 
 \begin{document}
 
@@ -77,6 +81,11 @@ Constrained Multiobjective Optimization}} \\
     
 \end{titlepage}
 
+\newpage
+\tableofcontents
+\listoftables
+\newpage
+\listoffigures
 \newpage
 
 % ==================== REPORT BODY ====================
@@ -458,5 +467,96 @@ Tournament selection is used within the archives. For a given archive \(A\) (siz
     \caption{Results Summary }
 \end{figure}
 
+
+% ==================== LANDSCAPE TABLE IMAGES ====================
+\clearpage
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{C-IGD.png}
+        \caption{Table 1: IGD values for C-type problems}
+    \end{figure}
+\end{landscape}
+
+\clearpage
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{C-HV.png}
+        \caption{Table 2: HV values for C-type problems}
+    \end{figure}
+\end{landscape}
+
+\clearpage
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{DC-IGD.png}
+        \caption{Table 3: IGD values for DC-type problems}
+    \end{figure}
+\end{landscape}
+
+\clearpage
+\begin{landscape}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{DC-HV.png}
+        \caption{Table 4: HV values for DC-type problems}
+    \end{figure}
+\end{landscape}
+
+% ==================== CONTRIBUTIONS ====================
+\clearpage
+\section{Novelty}
+
+This project introduces several novel aspects that distinguish it from standard benchmarking studies:
+
+\begin{itemize}
+    \item \textbf{Parallel execution:} The code supports running many experiments at once using multiple CPU cores. This makes large-scale testing much faster and is easy to use with the \texttt{run\_sequential.py --workers N} option.
+    \item \textbf{Monte Carlo HV estimation:} For problems with many objectives or constraints, the code uses Monte Carlo simulation to estimate the hypervolume efficiently, making it practical for high-dimensional cases.
+    \item \textbf{Unified framework:} All six algorithms (CTAEA and peers) are implemented in a single codebase, making it easy to compare, extend, or benchmark them under the same settings.
+    \item \textbf{Extensible and modular:} The structure allows for easy addition of new problems, algorithms, or metrics for future research.
+\end{itemize}
+
+These features enable robust, scalable, and fair comparison of state-of-the-art algorithms on challenging constrained multi-objective problems.
+
+
+\section{Team Contributions}
+
+\begin{itemize}
+    \item \textbf{Raj Maurya (B23406):} 30\% 
+    \item \textbf{Vyom Thacker (B23417):} 30\%
+    \item \textbf{Divyansh Jain (B23397):} 20\%
+    \item \textbf{Pragyansh Saxena (B23328):} 20\%
+\end{itemize}
+
+\vspace{1em}
+\textbf{Divyansh Jain and Pragyansh Saxena:} PPTs, Reports, Results Organisation, Structuring.\\
+\textbf{Raj Maurya and Vyom Thacker:} Implementations, Paper reviews, Git and Simulations.
+
+\vspace{1em}
+\noindent
+\textbf{Project GitHub:} \url{https://github.com/rajm012/Quant-Finance-Project}\\
+\textbf{Contact Emails:}
+\begin{itemize}
+    \item b23406@students.iitmandi.ac.in
+    \item b23417@students.iitmandi.ac.in
+    \item b23397@students.iitmandi.ac.in
+    \item b23328@students.iitmandi.ac.in
+\end{itemize}
+
+To see the codes, PPT, report, and more, visit the GitHub link above. For any queries or to contact the authors, use the emails listed.
+
+% ==================== AI USAGE ====================
+
+
+\section{AI Assistance}
+
+All the code, report, results, and presentations have been structured by the team only. The basic format and content of codes, reports, and presentations were made by the team. For formatting PPT and code, we used some LLM models and tools as follows:
+
+\begin{itemize}
+    \item \textbf{GAMMA:} For better visuals in PPT
+    \item \textbf{DeepSeek:} For code formatting
+\end{itemize}
 
 \end{document}

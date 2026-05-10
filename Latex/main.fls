@@ -1,9 +1,9 @@
-PWD /home/rajm012/Desktop/6th Semester/3-Quant Finance (Prof. Manoj Thankur)/Project/Latex
+PWD /home/rajm012/Downloads/3-Quant Finance (Prof. Manoj Thankur)/Project/Latex
 INPUT /etc/texmf/web2c/texmf.cnf
 INPUT /usr/share/texmf/web2c/texmf.cnf
 INPUT /usr/share/texlive/texmf-dist/web2c/texmf.cnf
 INPUT /var/lib/texmf/web2c/pdftex/pdflatex.fmt
-INPUT /home/rajm012/Desktop/6th Semester/3-Quant Finance (Prof. Manoj Thankur)/Project/Latex/main.tex
+INPUT /home/rajm012/Downloads/3-Quant Finance (Prof. Manoj Thankur)/Project/Latex/main.tex
 OUTPUT main.log
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -308,6 +308,12 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/algorithmicx/algorithmicx.sty
 INPUT /usr/share/texmf/tex/latex/lm/lmodern.sty
 INPUT /usr/share/texmf/tex/latex/lm/lmodern.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -381,6 +387,9 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map
 INPUT /usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr17.tfm
+INPUT ./main.toc
+INPUT ./main.toc
+INPUT main.toc
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmr12.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmr8.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/rm-lmr6.tfm
@@ -396,6 +405,15 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+OUTPUT main.toc
+INPUT ./main.lot
+INPUT ./main.lot
+INPUT main.lot
+OUTPUT main.lot
+INPUT ./main.lof
+INPUT ./main.lof
+INPUT main.lof
+OUTPUT main.lof
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr8.tfm
 INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmr6.tfm
 INPUT /usr/share/texmf/tex/latex/lm/ts1lmr.fd
@@ -496,6 +514,30 @@ INPUT ./summary_table.png
 INPUT ./summary_table.png
 INPUT ./summary_table.png
 INPUT ./summary_table.png
+INPUT ./C-IGD.png
+INPUT ./C-IGD.png
+INPUT ./C-IGD.png
+INPUT ./C-IGD.png
+INPUT ./C-IGD.png
+INPUT ./C-HV.png
+INPUT ./C-HV.png
+INPUT ./C-HV.png
+INPUT ./C-HV.png
+INPUT ./C-HV.png
+INPUT ./DC-IGD.png
+INPUT ./DC-IGD.png
+INPUT ./DC-IGD.png
+INPUT ./DC-IGD.png
+INPUT ./DC-IGD.png
+INPUT ./DC-HV.png
+INPUT ./DC-HV.png
+INPUT ./DC-HV.png
+INPUT ./DC-HV.png
+INPUT ./DC-HV.png
+INPUT /usr/share/texmf/tex/latex/lm/t1lmtt.fd
+INPUT /usr/share/texmf/tex/latex/lm/t1lmtt.fd
+INPUT /usr/share/texmf/tex/latex/lm/t1lmtt.fd
+INPUT /usr/share/texmf/fonts/tfm/public/lm/ec-lmtt12.tfm
 INPUT main.aux
 INPUT ./main.out
 INPUT ./main.out
@@ -510,4 +552,5 @@ INPUT /usr/share/texmf/fonts/type1/public/lm/lmr8.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmsy6.pfb
 INPUT /usr/share/texmf/fonts/type1/public/lm/lmsy8.pfb
+INPUT /usr/share/texmf/fonts/type1/public/lm/lmtt12.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb
