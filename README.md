@@ -1,15 +1,47 @@
 
-# Quant-Algorithms(CTAEA): Paper implementation and improvements
 
-This repository provides both the full source code and the complete research workflow for constrained multi-objective optimization experiments. The folders `CTAEA-4` and `CTAEA-Curr` contain implementations for all six algorithms studied (not just CTAEA), enabling direct experimentation and extension (Curr represent the current version on which we are working and 4 represent the last version which was fully implemented) (other versions can be found in the git history, as deleted).
+# Quant-Algorithms (CTAEA): Paper Implementation and Improvements
+
+---
+
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Main Paper Reference](#main-paper-reference)
+3. [Models or Algorithms](#models-or-algorithms)
+4. [Benchmark Problems](#benchmark-problems)
+5. [Problem Variations](#problem-variations)
+6. [Repository Structure](#repository-structure)
+7. [Setup Instructions](#setup-instructions)
+8. [Running the Code](#running-the-code)
+9. [Metrics Used](#metrics-used)
+10. [Novelty](#novelty)
+11. [Command-line Parameters](#command-line-parameters)
+12. [Results](#results)
+13. [References](#references)
+14. [Authors](#authors)
+
+---
+
+
+## Project Overview
+
+This repository provides both the full source code and the complete research workflow for constrained multi-objective optimization experiments. The folders `CTAEA-4` and `CTAEA-Curr` contain implementations for all six algorithms studied (not just CTAEA), enabling direct experimentation and extension. `CTAEA-Curr` is the current version under development, while `CTAEA-4` is the last fully implemented version. (Other versions can be found in the git history.)
+
 
 In addition to the code, the repo includes experiment outputs, plots, paper artifacts, and scripts for aggregating and presenting results.
 
-The central question addressed here is: how do six state-of-the-art constrained multi-objective algorithms perform across a suite of benchmark problems with varying numbers of objectives ($m \in \{3,5,8,10,15\}$)?
+**Central Question:**
+
+> How do six state-of-the-art constrained multi-objective algorithms perform across a suite of benchmark problems with varying numbers of objectives ($m \in \{3,5,8,10,15\}$)?
 
 
-## CTAEA: Main Paper
-This project is primarily based on the paper:
+
+---
+
+## Main Paper Reference
+
+This project is primarily based on the following paper:
 
 **A Two-Archive Evolutionary Algorithm for Constrained Multi-Objective Optimization**
 
@@ -18,7 +50,9 @@ This project is primarily based on the paper:
 - **Direct PDF:** [Papers/Main-Paper.pdf](Papers/Main-Paper.pdf)
 - **IEEE Xplore:** [A Two-Archive Evolutionary Algorithm for Constrained Multi-Objective Optimization](https://ieeexplore.ieee.org/document/9099352)
 
-### Summary
+
+### CTAEA Summary
+
 CTAEA (Constrained Two-Archive Evolutionary Algorithm) is a state-of-the-art method for solving constrained multi-objective optimization problems (CMOPs). The key innovation is the use of two co-evolving archives:
 
 - **Feasible Archive (FA or CA):** Focuses on maintaining and improving feasible solutions, driving convergence to the true Pareto front.
@@ -26,7 +60,8 @@ CTAEA (Constrained Two-Archive Evolutionary Algorithm) is a state-of-the-art met
 
 The algorithm alternates between updating these two archives, using a tailored selection and variation strategy. This dual-archive approach allows CTAEA to efficiently balance feasibility and optimality, outperforming many previous algorithms on a wide range of benchmark problems.
 
-**Main contributions:**
+
+**Main Contributions:**
 - Proposes a two-archive framework for CMOPs
 - Demonstrates superior performance on both classic and difficult constrained benchmarks
 - Provides a robust mechanism for handling disconnected or complex feasible regions
@@ -34,8 +69,12 @@ The algorithm alternates between updating these two archives, using a tailored s
 For full details, see the [Main-Paper.pdf](Papers/Main-Paper.pdf) in the Papers directory or the [official IEEE Xplore page](https://ieeexplore.ieee.org/document/9099352).
 
 
+
+---
+
 ## Models or Algorithms
-There are 6 models/algorithms used in the work. Five are state-of-the-art (SOTA) and one is a new test benchmark. Their original papers are linked below:
+
+There are six models/algorithms used in this work. Five are state-of-the-art (SOTA) and one is a new test benchmark. Their original papers are linked below:
 
 - **IDBEA** (SOTA): [Improved Decomposition-Based Evolutionary Algorithm for Constrained Multiobjective Optimization](https://ieeexplore.ieee.org/document/7969316)
 - **NSGA-III** (SOTA): [An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point-Based Nondominated Sorting Approach, Part I: Solving Problems With Box Constraints](https://ieeexplore.ieee.org/document/6600851)
@@ -44,14 +83,20 @@ There are 6 models/algorithms used in the work. Five are state-of-the-art (SOTA)
 - **CMOEA/DD** (SOTA): [Constrained Multiobjective Evolutionary Algorithm With Dual Decomposition](https://ieeexplore.ieee.org/document/7553457)
 - **CTAEA** (new test marker): [A Two-Archive Evolutionary Algorithm for Constrained Multi-Objective Optimization](https://ieeexplore.ieee.org/document/9099352)
 
+
 You can find more details in the "Papers/" directory or by following the above links to the official IEEE Xplore pages.
 
 
-## Problems
+
+---
+
+## Benchmark Problems
+
 The simulations are conducted on 11 benchmark problems, divided into two main classes:
 
 - **C-type**: Classic constrained DTLZ problems, where constraints are added to the original DTLZ suite to test the ability of algorithms to handle feasible/infeasible regions.
 - **DC-type**: Difficult constrained DTLZ problems, designed to be more challenging by introducing disconnected or complex feasible regions.
+
 
 Each problem is a variant of the DTLZ family, widely used in multi-objective optimization research. Below is a brief explanation and a reference for each:
 
@@ -68,7 +113,8 @@ Each problem is a variant of the DTLZ family, widely used in multi-objective opt
 - **DC3DTLZ3**: Difficult constrained DTLZ3, the most complex in the suite, with multiple disconnected feasible regions. [DC-DTLZ reference](https://ieeexplore.ieee.org/document/7553457)
 
 
-### Table of Reference Points
+
+#### Table of Reference Points
 
 | Problem Type | PF Type | Reference Point for HV |
 |--------------|---------|------------------------|
@@ -85,14 +131,23 @@ Each problem is a variant of the DTLZ family, widely used in multi-objective opt
 | DC3-DTLZ3 | Sphere | (1.1, ..., 1.1) |
 
 
+
 **References:**
 - K. Deb, L. Thiele, M. Laumanns, and E. Zitzler, "Scalable Test Problems for Evolutionary Multiobjective Optimization," Evolutionary Multiobjective Optimization, 2005. ([DTLZ original paper](https://ieeexplore.ieee.org/document/1290934))
 - Y. Tian, X. Zhang, C. Zhang, and Y. Jin, "A Multiobjective Evolutionary Algorithm Based on Dominance and Decomposition for Multiobjective Optimization Problems with Complicated Pareto Sets," IEEE Transactions on Evolutionary Computation, 2016. ([DC-DTLZ reference](https://ieeexplore.ieee.org/document/7553457))
 
 
 
+
+---
+
+
 ## Problem Variations
+
 Each of the 11 benchmark problems is evaluated at multiple levels of difficulty, controlled by the parameter $m$ (the number of objectives). The $m$-values used are:
+- **15 objectives**
+
+---
 
 - **3 objectives**
 - **5 objectives**
@@ -107,12 +162,16 @@ For each problem and each $m$ value, the algorithms must:
 - Satisfy all constraints (for feasible solutions)
 - Handle disconnected or complex feasible regions (especially in DC-type problems)
 
+
 By comparing performance across these $m$ values, the study reveals how each algorithm copes with increasing problem complexity and dimensionality—a key aspect in real-world multi-objective optimization.
 
 
-## What is inside this repo
 
-At a high level the repository contains:
+---
+
+## Repository Structure
+
+At a high level, the repository contains:
 
 1. Raw algorithm result files in JSON format.
 2. Aggregated result bundles for each algorithm family.
@@ -120,9 +179,13 @@ At a high level the repository contains:
 4. A static HTML report viewer (`main.html`) with pre-embedded tables.
 5. LaTeX, plots, logs, and screenshots used while preparing the paper.
 
+
 This means the repo is best understood as a benchmark analysis archive rather than an installable software package.
 
-## Setup
+
+---
+
+## Setup Instructions
 
 Use a virtual environment so the analysis dependencies do not leak into the system Python.
 
@@ -134,18 +197,23 @@ pip install -r requirements.txt
 source .venv/bin/activate
 ```
 
+
 Once dependencies are installed, you can inspect the static viewer with a browser or run the reporting script if you have the expected input layout in place.
 
-## How the repository is organized
 
-### Top-level files
+---
+
+## How the Repository is Organized
+
+### Top-level Files
 
 - [README.md](README.md): This documentation.
 - [requirements.txt](requirements.txt): Python packages used for analysis, plotting, JSON handling, and report generation.
 - [test.py](test.py): A lightweight report generator that aggregates per-problem JSON into Markdown tables.
 - [main.html](main.html): A browser-based static dashboard that embeds precomputed tables for quick viewing.
 
-### Results folders
+
+### Results Folders
 
 The numbered result folders are the most important parts of the repo.
 - `1-Results-IDBEA/`: JSON outputs for I-DBEA runs.
@@ -161,7 +229,8 @@ Each of these folders stores files named by problem and dimension, for example `
 Organized as `{Problem Name}_{m-value}_{Model Name}.json`
 
 
-### Analysis and paper-support folders
+
+### Analysis and Paper-Support Folders
 
 - `Latex/`: LaTeX source, build artifacts, and exported figures for the paper draft.
 - `Papers/`: The research references and paper PDFs used while preparing the analysis.
@@ -169,7 +238,8 @@ Organized as `{Problem Name}_{m-value}_{Model Name}.json`
 - `Final-Accumulation/`: Final consolidated outputs from the analysis pipeline.
 - `CTAEA-4/` and `CTAEA-Curr/`: Intermediate and Current working snippets for this whole paper implementation.
 
-### Visual artifacts
+
+### Visual Artifacts
 
 The `Latex/` folder contains many generated figures and paper-build files, which tells us this repo was used to prepare a results-heavy paper. The images there are not random clutter; they are the visual outputs that correspond to the final tables and comparisons:
 
@@ -184,7 +254,10 @@ The `Latex/` folder contains many generated figures and paper-build files, which
 
 The presence of `main.pdf`, `main.tex`, and LaTeX auxiliary files indicates the paper was compiled inside the repo, not just written elsewhere.
 
-## What the data looks like
+
+---
+
+## What the Data Looks Like
 
 The raw experiment JSONs follow a consistent nested structure. A sample file contains:
 
@@ -204,7 +277,8 @@ Typical leaf fields are:
 
 This structure is good for analysis because it lets one file represent the full result set for one algorithm or one experiment slice while keeping problem/dimension comparisons simple.
 
-### Meaning of the fields
+
+#### Meaning of the Fields
 
 - `igd_median`: median Inverted Generational Distance across repeated runs. Lower is better.
 - `igd_iqr`: spread of IGD across runs. Lower is more stable.
@@ -216,6 +290,9 @@ This structure is good for analysis because it lets one file represent the full 
 An important detail from the actual data is that some entries use `Infinity` or `0.0` to signal infeasible or undefined outcomes. That means any table or plot needs to treat those values carefully instead of ranking them as ordinary numeric results.
 
 
+
+---
+
 ## Metrics Used
 
 - **IGD (Inverted Generational Distance):** Measures how close the solutions found by an algorithm are to the true Pareto front. Lower IGD means better convergence and diversity.
@@ -224,6 +301,9 @@ An important detail from the actual data is that some entries use `Infinity` or 
 These metrics are computed using the scripts in the `Metrics/` folder (see `igd.py` and `hv.py` in `CTAEA-Curr/Metrics/` and `CTAEA-4/Metrics/`).
 
 
+
+---
+
 ## Novelty
 
 - **Parallel execution:** The code supports running many experiments at once using multiple CPU cores. This makes large-scale testing much faster and is easy to use with the `run_sequential.py --workers N` option.
@@ -231,6 +311,9 @@ These metrics are computed using the scripts in the `Metrics/` folder (see `igd.
 - **Unified framework:** All six algorithms (CTAEA and peers) are implemented in a single codebase, making it easy to compare, extend, or benchmark them under the same settings.
 
 
+
+
+---
 
 ## Running the Code
 
@@ -245,27 +328,21 @@ These metrics are computed using the scripts in the `Metrics/` folder (see `igd.
 	- `cd CTAEA-Curr` (or `cd CTAEA-4`)
 
 4. **Main scripts and their usage:**
-
 	- **main.py**: Entry point for running a full experiment or a quick test. Edit this file to set up your experiment configuration (algorithm, problem, m-value, etc.). Running this script will execute the selected algorithm(s) and output results to the appropriate results folder.
-	  - *Usage:* `python main.py`
-	  - *Output:* JSON files with results for each algorithm/problem/m combination.
-
+		- *Usage:* `python main.py`
+		- *Output:* JSON files with results for each algorithm/problem/m combination.
 	- **run_sequential.py**: Runs experiments sequentially or in parallel using multiple CPU cores. You can specify the number of workers for parallel execution.
-	  - *Usage:* `python run_sequential.py --workers 4`
-	  - *Output:* Aggregated results for all specified runs, saved as JSON files. Great for large-scale benchmarking.
-      *Recommended*
-
+		- *Usage:* `python run_sequential.py --workers 4`
+		- *Output:* Aggregated results for all specified runs, saved as JSON files. Great for large-scale benchmarking. **(Recommended)**
 	- **run_parallel_gpu.py**: Similar to `run_sequential.py` but optimized for running experiments on multiple GPUs (if available). Use this if you have GPU resources and want to speed up computation.
-	  - *Usage:* `python run_parallel_gpu.py --workers 2`
-	  - *Output:* Parallelized results leveraging GPU acceleration.
-
+		- *Usage:* `python run_parallel_gpu.py --workers 2`
+		- *Output:* Parallelized results leveraging GPU acceleration.
 	- **quick_test.py**: Runs a very fast, small-scale test to check if the code and environment are set up correctly. Useful for debugging or verifying installation.
-	  - *Usage:* `python quick_test.py`
-	  - *Output:* Console output and a small result file, confirming the code runs as expected.
-
+		- *Usage:* `python quick_test.py`
+		- *Output:* Console output and a small result file, confirming the code runs as expected.
 	- **test_parallel.py**: Script for testing the parallel execution logic. Use this to verify that parallelization is working on your system.
-	  - *Usage:* `python test_parallel.py`
-	  - *Output:* Console output showing parallel task execution.
+		- *Usage:* `python test_parallel.py`
+		- *Output:* Console output showing parallel task execution.
 
 5. **Code structure**
 	- Algorithms are implemented in `Algorithms/` (see `ctaea.py` for CTAEA and `peer_algorithms.py` for others).
@@ -281,7 +358,10 @@ These metrics are computed using the scripts in the `Metrics/` folder (see `igd.
 **Recommendation:** Use the file `run_sequential.py` as it has been most optimized for small systems and can be extended to large too.
 
 
-### Command-line Parameters (Paras used)
+
+---
+
+## Command-line Parameters
 
 The following command-line arguments are available for the main experiment runner (`run_sequential.py`). You can combine them to control which algorithms, problems, and settings are used:
 
@@ -306,9 +386,35 @@ The following command-line arguments are available for the main experiment runne
 - Quick test with 3 runs: `python run_sequential.py --all --runs 3 --workers 4`
 - Run only selected problems and m-values: `python run_sequential.py --all --problems C1DTLZ1 C1DTLZ3 --m-values 3 5`
 
+
 See the script's help (`python run_sequential.py --help`) for full details and more usage examples.
 
 *For proper optimized run, use it like `python run_sequential.py --algo ALGONAME --runs 51 --workers 12 --output DIRNAME`*
+
+
+
+---
+
+
+## Results
+
+Below are the main results of the benchmarking study. Each table summarizes the performance of all six algorithms across the benchmark problems and different $m$ values. The best results are highlighted in green, and the worst in red (as in the original tables).
+
+### IGD Results: C-type Problems
+![IGD C-type](Final-Accumulation/Tables/C-IGD.png)
+
+### IGD Results: DC-type Problems
+![IGD DC-type](Final-Accumulation/Tables/DC-IGD.png)
+
+### HV Results: C-type Problems
+![HV C-type](Final-Accumulation/Tables/C-HV.png)
+
+### HV Results: DC-type Problems
+![HV DC-type](Final-Accumulation/Tables/DC-HV.png)
+
+For detailed numeric results and additional analysis, see the HTML report and the `Final-Accumulation/Tables/` directory.
+
+---
 
 
 ## References
@@ -318,4 +424,14 @@ See the script's help (`python run_sequential.py --help`) for full details and m
 - Tian, Y., Zhang, X., Zhang, C., & Jin, Y. (2016). A Multiobjective Evolutionary Algorithm Based on Dominance and Decomposition for Multiobjective Optimization Problems with Complicated Pareto Sets. *IEEE Transactions on Evolutionary Computation*, 20(3), 405-420. [DC-DTLZ paper](https://ieeexplore.ieee.org/document/7553457)
 - Other algorithm papers: See links in the "Models or Algorithms" section above for IDBEA, NSGA-III, CMOEA, CMOEA/D, and CMOEA/DD.
 
+---
+
+## Authors
+
+- Raj Maurya (B23406)
+- Vyom Thacker (B23417)
+- Divyansh Jain (B23397)
+- Pragyansh Saxena (B23328)
+
+--- 
 
