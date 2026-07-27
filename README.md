@@ -423,6 +423,7 @@ For detailed numeric results and additional analysis, see the HTML report and th
 - Deb, K., Thiele, L., Laumanns, M., & Zitzler, E. (2005). Scalable Test Problems for Evolutionary Multiobjective Optimization. In *Evolutionary Multiobjective Optimization* (pp. 105-145). [DTLZ paper](https://ieeexplore.ieee.org/document/1290934)
 - Tian, Y., Zhang, X., Zhang, C., & Jin, Y. (2016). A Multiobjective Evolutionary Algorithm Based on Dominance and Decomposition for Multiobjective Optimization Problems with Complicated Pareto Sets. *IEEE Transactions on Evolutionary Computation*, 20(3), 405-420. [DC-DTLZ paper](https://ieeexplore.ieee.org/document/7553457)
 - Other algorithm papers: See links in the "Models or Algorithms" section above for IDBEA, NSGA-III, CMOEA, CMOEA/D, and CMOEA/DD.
+- [Presentation Slides](https://gamma.app/docs/Benchmarking-Constrained-Multi-Objective-Optimization-Algorithms-n5dx1xckqev3vh5?mode=doc)
 
 ---
 
